@@ -1,0 +1,118 @@
+const readline = require("readline");
+
+// Create readline interface
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Array to store student records
+const studentRecords = [];
+
+// Function to add a new student record
+function addStudentRecord(name, id, phone, address) {
+  const newStudent = {
+    name: name,
+    id: id,
+    phone: phone,
+    address: address
+  };
+
+  studentRecords.push(newStudent);
+}
+
+// Function to search student records based on a query
+function searchStudentRecords(query) {
+  query = query.toLowerCase();
+
+  // Filter student records based on the query
+  const results = studentRecords.filter(student => {
+    const { name, id, phone, address } = student;
+    const lowerCaseName = name.toLowerCase();
+    const lowerCaseId = id.toLowerCase();
+    const lowerCasePhone = phone.toLowerCase();
+    const lowerCaseAddress = address.toLowerCase();
+
+    // Check if query matches name, ID, phone, or address
+    return (
+      lowerCaseName.includes(query) ||
+      lowerCaseId.includes(query) ||
+      lowerCasePhone.includes(query) ||
+      lowerCaseAddress.includes(query)
+    );
+  });
+
+  return results;
+}
+
+// Function to display student records
+function displayStudentRecords(records) {
+  if (records.length === 0) {
+    console.log("No matching records found.");
+    return;
+  }
+
+  console.log("Search results:");
+  records.forEach(record => {
+    console.log(`Name: ${record.name}`);
+    console.log(`ID: ${record.id}`);
+    console.log(`Phone: ${record.phone}`);
+    console.log(`Address: ${record.address}`);
+    console.log("------------------------");
+  });
+}
+
+// Function to handle user input for adding a student record
+function promptAddStudentRecord() {
+  rl.question("Enter student name: ", name => {
+    rl.question("Enter student ID: ", id => {
+      rl.question("Enter student phone number: ", phone => {
+        rl.question("Enter student address: ", address => {
+          addStudentRecord(name, id, phone, address);
+          console.log("Student record added successfully.");
+          promptMenu();
+        });
+      });
+    });
+  });
+}
+
+// Function to handle user input for searching student records
+function promptSearchStudentRecords() {
+  rl.question("Enter search query: ", query => {
+    const searchResults = searchStudentRecords(query);
+    console.log(`Search results for "${query}":`);
+    displayStudentRecords(searchResults);
+    promptMenu();
+  });
+}
+
+// Function to display the menu and handle user input
+function promptMenu() {
+  console.log("\nMenu:");
+  console.log("1. Add a student record");
+  console.log("2. Search for student records");
+  console.log("3. Exit");
+
+  rl.question("Enter your choice: ", choice => {
+    switch (choice) {
+      case "1":
+        promptAddStudentRecord();
+        break;
+      case "2":
+        promptSearchStudentRecords();
+        break;
+      case "3":
+        rl.close();
+        break;
+      default:
+        console.log("Invalid choice. Please try again.");
+        promptMenu();
+        break;
+    }
+  });
+}
+
+// Start the program
+console.log("Welcome to the Student Records System!");
+promptMenu();
